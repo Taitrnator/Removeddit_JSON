@@ -1,8 +1,8 @@
 import express from 'express';
-import {getComments} from './comments';
-import {getThread} from './thread';
-
+// import {getComments} from './comments';
+// import {getThread} from './thread';
+import { r } from './token';
 
 export const app = express();
 
-console.log(getThread('TwoXChromosomes', '7v2fcs'));
+console.log(r);

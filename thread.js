@@ -1,7 +1,6 @@
-import { app } from './app'
+import fetch from 'node-fetch'
 import { json } from './utils'
 import { getAuth } from './auth'
-
 
 const cachedThreads = {}
 
@@ -24,13 +23,9 @@ export const getThread = (subreddit, threadID, commentID = '') => {
   // Fetch thread from reddit
   return (
     getAuth()
-      .then(auth => {
-        console.log('attempting a get');
-        app.get(url, auth);
-        })
+      .then(auth => fetch(url, auth))
       .then(json)
       .then(thread => {
-        console.log(thread);
         // Create cache object for thread  if it doesn't exists
         if (!cachedThreads.hasOwnProperty(threadID)) {
           cachedThreads[threadID] = {}
