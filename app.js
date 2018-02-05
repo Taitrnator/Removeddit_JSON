@@ -1,8 +1,17 @@
-import express from 'express';
-// import {getComments} from './comments';
-// import {getThread} from './thread';
-import { r } from './token';
+import {getComments} from './comments';
+import {getThread} from './thread';
+import snoowrap from 'snoowrap'
+import { credentials } from './clientID'
 
-export const app = express();
 
-console.log(r);
+let Token = new snoowrap({
+  userAgent: credentials.userAgent,
+  clientId: credentials.clientId,
+  clientSecret: credentials.clientSecret,
+  username: credentials.username,
+  password: credentials.password
+});
+
+
+
+getComments('TwoXChromosomes', '7v6xf3');
