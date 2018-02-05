@@ -17,10 +17,9 @@ export const getThread = (subreddit, threadID, commentID = '') => {
       return Promise.resolve(cachedThreads[threadID][commentID])
     }
   }
-
+  console.log('attempting to get thread');
   // .getSubmissions(threadID).expandReplies({limit: Infinity, depth: Infinity});
     // Create cache object for thread  if it doesn't exists
-  else if (!cachedThreads.hasOwnProperty(threadID)) {
     cachedThreads[threadID] = {}
 
     Token.getSubreddit(subreddit);
@@ -32,5 +31,4 @@ export const getThread = (subreddit, threadID, commentID = '') => {
       return JSON.stringify(thread);
     // Fetch thread from reddit
   })
-  }
 }

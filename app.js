@@ -1,9 +1,6 @@
 import fs from 'fs';
 import snoowrap from 'snoowrap'
-import {  getPost,
-          getCommentIDs } from './comments';
-import {getThread} from './thread';
-
+import {getPost, getCommentIDs, getThread} from './thread';
 import { Token } from './token';
 import {
   getPost as getRemovedPost,
@@ -32,6 +29,7 @@ let subreddit = 'TwoXChromosomes',
       // Get thread from reddit
       getPost(subreddit, threadID)
         .then(post => {
+          console.log(post);
           // Fetch the thread from pushshift if it was deleted/removed
           if (isDeleted(post.selftext)) {
             console.log('post deleted');
