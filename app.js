@@ -1,17 +1,14 @@
 import {getComments} from './comments';
 import {getThread} from './thread';
 import snoowrap from 'snoowrap'
-import { credentials } from './clientID'
+import { Token } from './token';
+const fs = require('fs');
 
+// getComments('TwoXChromosomes', '7v6xf3');
+// let subreddit = Token.getSubreddit('TwoXChromosomes')
 
-let Token = new snoowrap({
-  userAgent: credentials.userAgent,
-  clientId: credentials.clientId,
-  clientSecret: credentials.clientSecret,
-  username: credentials.username,
-  password: credentials.password
-});
+// Token.getHot().then(console.log);
 
-
-
-getComments('TwoXChromosomes', '7v6xf3');
+getThread('TwoXChromosomes', '7v6xf3').then(value => {
+  fs.writeFile('thread.json', value, function(err){ });
+})

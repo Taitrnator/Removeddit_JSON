@@ -11,6 +11,7 @@
   "dependencies": {
     "es6-promise": "^4.2.4",
     "express": "^4.16.2",
+    "fs": "0.0.1-security",
     "isomorphic-fetch": "^2.2.1",
     "node-fetch": "^2.0.0",
     "snoowrap": "^1.15.2",

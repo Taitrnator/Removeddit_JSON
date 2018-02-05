@@ -1,5 +1,7 @@
 import { fetchMultiple, jsonMultiple, unique } from './utils'
 import { getAuth } from './auth'
+import snoowrap from 'snoowrap'
+import { getToken } from './token';
 import { getThread } from './thread'
 
 
@@ -74,7 +76,7 @@ const handleComment = (comment, commentID, results) => {
 }
 
 const handleMoreChildren = (threadID, commentID, results) => (
-  getAuth()
+  getToken()
     .then(auth => (
       Promise.all(results.morechildrenIDs[commentID].map(idArray =>
         fetchMultiple(`https://oauth.reddit.com/api/morechildren?link_id=t3_${threadID}&children=`, idArray, auth)))

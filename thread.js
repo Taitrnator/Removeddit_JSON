@@ -1,6 +1,5 @@
-import fetch from 'node-fetch'
-import { json } from './utils'
-import { getAuth } from './auth'
+import snoowrap from 'snoowrap'
+import { Token } from './token';
 
 const cachedThreads = {}
 
@@ -19,23 +18,19 @@ export const getThread = (subreddit, threadID, commentID = '') => {
     }
   }
 
-  const url = `https://oauth.reddit.com/r/${subreddit}/comments/${threadID}/_/${commentID}`
-  // Fetch thread from reddit
-  return (
-    getAuth()
-      .then(auth => fetch(url, auth))
-      .then(json)
-      .then(thread => {
-        // Create cache object for thread  if it doesn't exists
-        if (!cachedThreads.hasOwnProperty(threadID)) {
-          cachedThreads[threadID] = {}
-        }
+  // .getSubmissions(threadID).expandReplies({limit: Infinity, depth: Infinity});
+    // Create cache object for thread  if it doesn't exists
+  else if (!cachedThreads.hasOwnProperty(threadID)) {
+    cachedThreads[threadID] = {}
 
-        // Save the thread for later
-        cachedThreads[threadID][commentID] = thread
-
-        // Return the thread
-        return thread
-      })
-  )
+    Token.getSubreddit(subreddit);
+    Token.getSubmission(threadID).expandReplies({limit: Infinity, depth: Infinity}).then(thread => {
+      console.log(thread);
+      // Save the thread for later
+      cachedThreads[threadID][commentID] = JSON.stringify(thread);
+      // Return the thread
+      return JSON.stringify(thread);
+    // Fetch thread from reddit
+  })
+  }
 }
