@@ -1,8 +1,5 @@
-var express = require('express');
-import { json } from './utils'
-import clientID from './clientID'
-
-var app = express();
+import { app } from './app';
+import { ClientID } from './clientID';
 
 // Token for reddit API
 let token = null
@@ -10,7 +7,7 @@ let token = null
 // Headers for getting reddit api token
 const tokenInit = {
   headers: {
-    Authorization: `Basic ${Buffer.from(clientID, 'base64').toString()}`,
+    Authorization: `Basic ${ClientID}`,
     'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
   },
   method: 'POST',
@@ -24,9 +21,7 @@ export const getToken = () => {
 
   return (
     app.get('https://www.reddit.com/api/v1/access_token', function(req, res) {
-      console.log(res);
-      json(res);
-      console.log(`collected response: ${res}`);
+      res = res.json();
       token = res.access_token
       return token
     })

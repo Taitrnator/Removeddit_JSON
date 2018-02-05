@@ -1,8 +1,7 @@
-var express = require('express');
+import { app } from './app'
 import { json } from './utils'
 import { getAuth } from './auth'
 
-var app = express();
 
 const cachedThreads = {}
 

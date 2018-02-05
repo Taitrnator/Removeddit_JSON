@@ -2,4 +2,4 @@
 // The app NEEDS TO BE an installed app and NOT a web apps
 
 // Current using dummy ID from throwaway
-export default '33W8M1OOxPv80A'
+export const ClientID = 'YOUR CLIENT ID';
