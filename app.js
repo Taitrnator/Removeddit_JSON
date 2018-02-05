@@ -1,14 +1,13 @@
 import fs from 'fs';
 import snoowrap from 'snoowrap'
 import {getPost, getCommentIDs, getThread} from './thread';
-import { Token } from './token';
+import { Token} from './token';
 import {
   getPost as getRemovedPost,
   getCommentIDs as getAllCommentIDs,
   getComments as getRemovedComments,
 } from './pushshift';
 import { isDeleted, difference } from './utils';
-
 
 // getComments('TwoXChromosomes', '7v6xf3');
 // let subreddit = Token.getSubreddit('TwoXChromosomes')
@@ -19,6 +18,7 @@ import { isDeleted, difference } from './utils';
 //   fs.writeFile('thread.json', value, function(err){ });
 // })
 
+Token.getUser('not_an_aardvark').link_karma.then(console.log)
 
 let subreddit = 'TwoXChromosomes',
     threadID = '7v6xf3';
@@ -27,24 +27,25 @@ let subreddit = 'TwoXChromosomes',
 
     Promise.all([
       // Get thread from reddit
-      getPost(subreddit, threadID)
-        .then(post => {
-          console.log(post);
-          // Fetch the thread from pushshift if it was deleted/removed
-          if (isDeleted(post.selftext)) {
-            console.log('post deleted');
-            // getRemovedPost(threadID)
-            //   .then(removedPost => {
-            //     removedPost.removed = true
-            //     this.setState({ post: removedPost })
-            //   })
-          }
-        })
-      // Get comment ids from reddit
-        .then(() => getCommentIDs(subreddit, threadID)),
-
-      // Get comment ids from pushshift
-      getAllCommentIDs(threadID)
+      Token.getSubmission(threadID).expandReplies({limit: Infinity, depth: Infinity}).then(console.log)
+      // getPost(subreddit, threadID)
+      //   .then(post => {
+      //     console.log(post);
+      //     // Fetch the thread from pushshift if it was deleted/removed
+      //     if (isDeleted(post.selftext)) {
+      //       console.log('post deleted');
+      //       // getRemovedPost(threadID)
+      //       //   .then(removedPost => {
+      //       //     removedPost.removed = true
+      //       //     this.setState({ post: removedPost })
+      //       //   })
+      //     }
+      //   })
+      // // Get comment ids from reddit
+      //   .then(() => getCommentIDs(subreddit, threadID)),
+      //
+      // // Get comment ids from pushshift
+      // getAllCommentIDs(threadID)
 ])
       .then(results => {
         const foundIDs = results[0]
