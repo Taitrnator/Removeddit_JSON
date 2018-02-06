@@ -1,13 +1,19 @@
 import fs from 'fs';
 import snoowrap from 'snoowrap'
-import {getPost, getCommentIDs, getThread} from './thread';
-import { Token} from './token';
+import {
+  getPost
+} from './thread'
+import {
+  getComments
+} from './comments'
 import {
   getPost as getRemovedPost,
-  getCommentIDs as getAllCommentIDs,
-  getComments as getRemovedComments,
-} from './pushshift';
-import { isDeleted, difference } from './utils';
+  getComments as getPushshiftComments,
+} from './pushshift'
+import {
+  isDeleted,
+  isRemoved
+} from './utils'
 
 // getComments('TwoXChromosomes', '7v6xf3');
 // let subreddit = Token.getSubreddit('TwoXChromosomes')
@@ -20,45 +26,58 @@ import { isDeleted, difference } from './utils';
 
 
 let subreddit = 'TwoXChromosomes',
-    threadID = '7v6xf3';
+  threadID = '7v6xf3';
 
-    console.timeEnd('scripts loaded')
+Promise.all([
+    // Get thread from reddit
+    getPost(subreddit, threadID)
+    .then(post => {
+      // Fetch the thread from pushshift if it was deleted/removed
+      if (isDeleted(post.selftext)) {
+        getRemovedPost(threadID)
+          .then(removedPost => {
+            removedPost.removed = true
+          })
+      }
+    }),
+    // Get comment ids from pushshift
+    getPushshiftComments(threadID),
+  ])
+  .then(console.log('///////////PUSH SHIFT COMMENTS///////////'))
+  .then((res) => console.log(res))
+  .then(results => {
+    const pushshiftComments = results[1]
 
-    Promise.all([
-      // Get thread from reddit
-      Token.getSubmission(threadID).expandReplies({limit: Infinity, depth: Infinity})
-        .then(post => {
-          console.log(post);
-          // Fetch the thread from pushshift if it was deleted/removed
-          if (isDeleted(post.selftext)) {
-            getRemovedPost(threadID)
-              .then(removedPost => {
-                removedPost.removed = true
-                this.setState({ post: removedPost })
-              })
+    // Extract ids from pushshift response
+    const ids = pushshiftComments.map(comment => comment.id)
+    console.log('pushshift:', ids.length)
+
+    // Get all the comments from reddit
+    return (
+      getRedditComments(ids)
+      .then(redditComments => {
+        pushshiftComments.forEach(comment => {
+          // Replace pushshift score with reddit (its usually more accurate)
+          const redditComment = redditComments.find(rComment => rComment.id === comment.id)
+          if (redditComment !== undefined) {
+            comment.score = redditComment.score
           }
         })
-      // // Get comment ids from reddit
-      .then(() => getCommentIDs(subreddit, threadID))
-      //
-      // // Get comment ids from pushshift
-      .then(() => getAllCommentIDs(threadID))
-])
-      .then(results => {
-        try {
-        const foundIDs = results[0]
-        const allIDs = results[1]
+        return redditComments
+      })
+    )
+  })
+  .then(redditComments => {
+      console.log('reddit:', redditComments.length)
+      const removed = []
+      const deleted = []
 
-        console.log("////////////////results 0");
-        console.log(results[0]);
-        console.log("////////////////results 1");
-        console.log(results[1]);
-
-        const removedIDs = difference(allIDs, foundIDs)
-        // Get removed comments from pushshift
-        return getRemovedComments(removedIDs)
-        }
-        catch(err) {
-          console.log(`uh oh: ${error}`)
+      // Check what as removed / deleted according to reddit
+      redditComments.forEach(comment => {
+        if (isRemoved(comment.body)) {
+          removed.push(comment.id)
+        } else if (isDeleted(comment.body)) {
+          deleted.push(comment.id)
         }
       })
+    })

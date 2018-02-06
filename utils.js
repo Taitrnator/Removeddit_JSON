@@ -1,6 +1,4 @@
-import SnuOwnd from 'snuownd';
-import snoowrap from 'snoowrap';
-import { Token } from './token';
+import SnuOwnd from 'snuownd'
 
 const markdown = SnuOwnd.getParser()
 
@@ -11,10 +9,10 @@ export const flatten = arr => arr.reduce(
 )
 
 // Same as: array => Set => array
-export const unique = arr => { arr.filter((value, index) => arr.indexOf(value) === index) }
+export const unique = arr => arr.filter((value, index) => arr.indexOf(value) === index)
 
 // Everything in arr1 that is not in arr2
-export const difference = (arr1, arr2) => { arr1.filter(x => !arr2.includes(x)) }
+export const difference = (arr1, arr2) => arr1.filter(x => !arr2.includes(x))
 
 // Take on big array and split it into an array of chunks with correct size
 export const chunk = (arr, size) => {
@@ -24,9 +22,6 @@ export const chunk = (arr, size) => {
   }
   return chunks
 }
-
-// JSON parsing for fetch
-export const json = x => x.json()
 
 // Make multiple requests to the same url, with an array of data (usually comment IDs)
 // This is needed since there is a limit on how long a url can be
@@ -42,8 +37,11 @@ export const jsonMultiple = responses => Promise.all(responses.map(json))
 export const toBase36 = number => parseInt(number, 10).toString(36)
 export const toBase10 = numberString => parseInt(numberString, 36)
 
-// Reddits way of indicating that something is deleted/removed
-export const isDeleted = testString => testString === '[deleted]'
+// Reddits way of indicating that something is deleted
+export const isDeleted = textBody => textBody === '[deleted]'
+
+// Reddits way of indicating that something is deleted
+export const isRemoved = textBody => textBody === '[removed]'
 
 // Default thumbnails for reddit threads
 export const redditThumbnails = ['self', 'default', 'image', 'nsfw']
@@ -82,27 +80,41 @@ export const prettyScore = score => {
 
   return score
 }
+
+// Retrieve, store and delete stuff in the local storage
+export const get = (key, defaultValue) => (
+  localStorage.getItem(key) !== null ? JSON.parse(localStorage.getItem(key)) : defaultValue
+)
+
+export const put = (key, value) => localStorage.setItem(key, JSON.stringify(value))
+
+
 // Sorting for comments
- export const topSort = (commentA, commentB) => {
-   if (commentA.score > commentB.score) return -1
-   if (commentA.score < commentB.score) return 1
-   return 0
- }
+export const topSort = (commentA, commentB) => {
+  if (commentA.score > commentB.score) return -1
+  if (commentA.score < commentB.score) return 1
+  return 0
+}
 
- export const bottomSort = (commentA, commentB) => {
-   if (commentA.score < commentB.score) return -1
-   if (commentA.score > commentB.score) return 1
-   return 0
- }
+export const bottomSort = (commentA, commentB) => {
+  if (commentA.score < commentB.score) return -1
+  if (commentA.score > commentB.score) return 1
+  return 0
+}
 
- export const newSort = (commentA, commentB) => {
-   if (commentA.created_utc < commentB.created_utc) return -1
-   if (commentA.created_utc > commentB.created_utc) return 1
-   return 0
- }
+export const newSort = (commentA, commentB) => {
+  if (commentA.created_utc > commentB.created_utc) return -1
+  if (commentA.created_utc < commentB.created_utc) return 1
+  return 0
+}
 
- export const oldSort = (commentA, commentB) => {
-   if (commentA.created_utc < commentB.created_utc) return -1
-   if (commentA.created_utc > commentB.created_utc) return 1
-   return 0
- }
+export const oldSort = (commentA, commentB) => {
+  if (commentA.created_utc < commentB.created_utc) return -1
+  if (commentA.created_utc > commentB.created_utc) return 1
+  return 0
+}
+
+// Filter comments
+export const showRemoved = comment => comment.removed === true
+export const showDeleted = comment => comment.deleted === true
+export const showRemovedAndDeleted = comment => comment.removed === true || comment.deleted === true
