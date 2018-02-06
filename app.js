@@ -18,7 +18,6 @@ import { isDeleted, difference } from './utils';
 //   fs.writeFile('thread.json', value, function(err){ });
 // })
 
-Token.getUser('not_an_aardvark').link_karma.then(console.log)
 
 let subreddit = 'TwoXChromosomes',
     threadID = '7v6xf3';
@@ -27,31 +26,39 @@ let subreddit = 'TwoXChromosomes',
 
     Promise.all([
       // Get thread from reddit
-      Token.getSubmission(threadID).expandReplies({limit: Infinity, depth: Infinity}).then(console.log)
-      // getPost(subreddit, threadID)
-      //   .then(post => {
-      //     console.log(post);
-      //     // Fetch the thread from pushshift if it was deleted/removed
-      //     if (isDeleted(post.selftext)) {
-      //       console.log('post deleted');
-      //       // getRemovedPost(threadID)
-      //       //   .then(removedPost => {
-      //       //     removedPost.removed = true
-      //       //     this.setState({ post: removedPost })
-      //       //   })
-      //     }
-      //   })
+      Token.getSubmission(threadID).expandReplies({limit: Infinity, depth: Infinity})
+        .then(post => {
+          console.log(post);
+          // Fetch the thread from pushshift if it was deleted/removed
+          if (isDeleted(post.selftext)) {
+            getRemovedPost(threadID)
+              .then(removedPost => {
+                removedPost.removed = true
+                this.setState({ post: removedPost })
+              })
+          }
+        })
       // // Get comment ids from reddit
-      //   .then(() => getCommentIDs(subreddit, threadID)),
+      .then(() => getCommentIDs(subreddit, threadID))
       //
       // // Get comment ids from pushshift
-      // getAllCommentIDs(threadID)
+      .then(() => getAllCommentIDs(threadID))
 ])
       .then(results => {
+        try {
         const foundIDs = results[0]
         const allIDs = results[1]
+
+        console.log("////////////////results 0");
+        console.log(results[0]);
+        console.log("////////////////results 1");
+        console.log(results[1]);
 
         const removedIDs = difference(allIDs, foundIDs)
         // Get removed comments from pushshift
         return getRemovedComments(removedIDs)
+        }
+        catch(err) {
+          console.log(`uh oh: ${error}`)
+        }
       })

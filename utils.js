@@ -11,10 +11,10 @@ export const flatten = arr => arr.reduce(
 )
 
 // Same as: array => Set => array
-export const unique = arr => arr.filter((value, index) => arr.indexOf(value) === index)
+export const unique = arr => { arr.filter((value, index) => arr.indexOf(value) === index) }
 
 // Everything in arr1 that is not in arr2
-export const difference = (arr1, arr2) => arr1.filter(x => !arr2.includes(x))
+export const difference = (arr1, arr2) => { arr1.filter(x => !arr2.includes(x)) }
 
 // Take on big array and split it into an array of chunks with correct size
 export const chunk = (arr, size) => {
@@ -82,3 +82,27 @@ export const prettyScore = score => {
 
   return score
 }
+// Sorting for comments
+ export const topSort = (commentA, commentB) => {
+   if (commentA.score > commentB.score) return -1
+   if (commentA.score < commentB.score) return 1
+   return 0
+ }
+
+ export const bottomSort = (commentA, commentB) => {
+   if (commentA.score < commentB.score) return -1
+   if (commentA.score > commentB.score) return 1
+   return 0
+ }
+
+ export const newSort = (commentA, commentB) => {
+   if (commentA.created_utc < commentB.created_utc) return -1
+   if (commentA.created_utc > commentB.created_utc) return 1
+   return 0
+ }
+
+ export const oldSort = (commentA, commentB) => {
+   if (commentA.created_utc < commentB.created_utc) return -1
+   if (commentA.created_utc > commentB.created_utc) return 1
+   return 0
+ }

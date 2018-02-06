@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import { json, toBase10, toBase36, chunk, flatten } from './utils'
 
 const baseURL = 'https://elastic.pushshift.io'
@@ -5,7 +6,7 @@ const postURL = `${baseURL}/rs/submissions/_search?source=`
 const commentURL = `${baseURL}/rc/comments/_search?source=`
 const commentIDsURL = 'https://api.pushshift.io/reddit/submission/comment_ids/'
 
-export const getCommentIDs = threadID => (
+export const getCommentIDs = (threadID) => (
   fetch(commentIDsURL + threadID)
     .then(json)
     .then(results => results.data)
